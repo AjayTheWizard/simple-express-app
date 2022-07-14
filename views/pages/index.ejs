@@ -1,0 +1,165 @@
+<%- include("../partials/head") %>
+
+<h1 class="mt-3 text-center">Encrypt and Decrypt Your Messages</h1>
+<h2 class="text-center">
+  We never store your Passwords!
+  <button
+    type="button"
+    class="mx-auto btn btn-primary"
+    data-bs-toggle="modal"
+    data-bs-target="#exampleModal"
+  >
+    How Secure
+  </button>
+</h2>
+
+<div
+  class="modal fade"
+  id="exampleModal"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Why We secure ?</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        Our Encoding and Decoding were done by Secret Type of Algorithm *******.
+        The Name itself is secret So Hard to hack. Even though It works slow.
+        It's takes around 600-700ms for operations. While Other Algorithm were
+        too fast, So A Super Computer can decode very fast around 2 - 10 minutes
+        by trying All Available Passwords. Approximately, Its takes years to
+        decode hash from Our Algorithm.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container border rounded-3 border-4 mb-3 border-danger p-4">
+  <h3>Encode :</h3>
+  <h4>Convert Hash to Message</h4>
+  <form class="encode">
+    <div class="form-floating mb-3">
+      <input
+        class="form-control"
+        placeholder="Leave a comment here"
+        id="hashEncode"
+        value=""
+        required
+      />
+      <label for="hashEncode">Message</label>
+    </div>
+    <div class="form-floating mb-3">
+      <input
+        class="form-control"
+        placeholder="Leave a comment here"
+        id="passwordEncode"
+        required
+        value=""
+      />
+      <label for="passwordEncode">Password</label>
+    </div>
+    <button class="btn btn-primary" type="submit">Encode</button>
+    <div class="overflow-scroll">
+      <p class="encode-result"></p>
+    </div>
+  </form>
+</div>
+<div
+  role="alert"
+  aria-live="assertive"
+  aria-atomic="true"
+  class="toast"
+  data-bs-autohide="false"
+>
+  <div class="toast-header">
+    <strong class="me-auto">Mr Hasher</strong>
+    <button
+      type="button"
+      class="btn-close"
+      data-bs-dismiss="toast"
+      aria-label="Close"
+    ></button>
+  </div>
+</div>
+<div class="container rounded-3 border border-4 border-danger p-4">
+  <h3>Decode :</h3>
+  <h4>Convert Message to Hash</h4>
+  <form class="decode">
+    <div class="form-floating mb-3">
+      <input
+        class="form-control"
+        placeholder="Leave a comment here"
+        id="hashDecode"
+        required
+        value=""
+      />
+      <label for="hashDecode">Hashed</label>
+    </div>
+    <div class="form-floating mb-3">
+      <input
+        class="form-control"
+        placeholder="Leave a comment here"
+        id="passwordDecode"
+        required
+        value=""
+      />
+      <label for="passwordDecode">Password</label>
+    </div>
+    <button class="btn btn-primary" type="submit">Decode</button>
+    <div class="overflow-scroll">
+      <p class="decode-result"></p>
+    </div>
+  </form>
+</div>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementsByTagName("form");
+    form[0].addEventListener("submit", function (e) {
+      e.preventDefault();
+      const formBody = {
+        msg: e.target[0].value,
+        password: e.target[1].value,
+      };
+      console.log(formBody)
+      fetch(`/encode?msg=${formBody["msg"]}&password=${formBody["password"]}`)
+        .then((res) => res.text())
+        .then((data) => {
+          document.getElementsByClassName("encode-result")[0].innerHTML = data;
+          navigator.clipboard.writeText(data);
+          setTimeout(() => {
+            alert("Text is copied to Your Clipboard!");
+          }, 500);
+        });
+    });
+    form[1].addEventListener("submit", function (e) {
+      e.preventDefault();
+      const formBody = {
+        hash: e.target[0].value,
+        password: e.target[1].value,
+      };
+      fetch(`/decode?hash=${formBody["hash"]}&password=${formBody["password"]}`)
+        .then((res) => res.text())
+        .then((data) => {
+          document.getElementsByClassName("decode-result")[0].innerHTML = data;
+          navigator.clipboard.writeText(data);
+          setTimeout(() => {
+            alert("Text is copied to Your Clipboard!", data.length, navigator.clipboard.readText().length);
+          }, 500);
+        });
+    });
+  });
+</script>
+<%- include("../partials/footer") %>
